@@ -1,9 +1,26 @@
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize the GoogleGenAI client with the API key directly from process.env.API_KEY
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Initialize the GoogleGenAI client
+// Use a fallback or safe check to prevent app-wide crash during module loading if env var is missing
+const apiKey = process.env.API_KEY;
+let ai: GoogleGenAI | null = null;
+
+if (apiKey) {
+  try {
+    ai = new GoogleGenAI({ apiKey: apiKey });
+  } catch (e) {
+    console.error("Failed to initialize GoogleGenAI:", e);
+  }
+} else {
+  console.warn("API_KEY is missing. AI features will be disabled. Please check Vercel Environment Variables.");
+}
 
 export const getDecorAdvice = async (partyType: string, budget: string, guestCount: string) => {
+  if (!ai) {
+    console.error("GoogleGenAI not initialized due to missing API Key");
+    return "Hệ thống tư vấn đang bảo trì (Missing API Key). Vui lòng liên hệ hotline 0909084174.";
+  }
+  
   try {
     // Call generateContent using the gemini-3-flash-preview model for text-based advice
     const response = await ai.models.generateContent({
