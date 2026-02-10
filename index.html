@@ -2,9 +2,9 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
     <title>Bong Bóng Xinh - Nghệ Thuật Trang Trí Sự Kiện Đẳng Cấp</title>
-    <!-- Tailwind CSS (Keep CDN for simplicity as per setup, though npm install is recommended for production) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Fonts -->
@@ -17,10 +17,13 @@
         --blue-deep: #007BA7;
         --luxury-dark: #0F172A;
         --luxury-bg: #F8FAFC;
+        /* Define safe area variables with fallbacks */
+        --safe-bottom: env(safe-area-inset-bottom, 20px);
       }
       
       html {
         scroll-behavior: smooth;
+        -webkit-tap-highlight-color: transparent; /* Remove grey tap highlight on iOS */
       }
 
       body {
@@ -32,6 +35,14 @@
 
       .font-serif {
         font-family: 'Cormorant Garamond', serif;
+      }
+
+      /* iOS Safe Area Utilities */
+      .pb-safe {
+        padding-bottom: var(--safe-bottom);
+      }
+      .bottom-safe {
+        bottom: calc(1rem + var(--safe-bottom));
       }
 
       /* --- ANIMATIONS --- */
@@ -97,8 +108,32 @@
         transition: box-shadow 0.5s ease;
       }
       
-      .luxury-shadow:hover {
-        box-shadow: 0 30px 60px -10px rgba(51, 193, 227, 0.15);
+      /* Only apply hover effects on devices that support hover (not mobile) */
+      @media (hover: hover) {
+        .luxury-shadow:hover {
+          box-shadow: 0 30px 60px -10px rgba(51, 193, 227, 0.15);
+        }
+        .btn-luxury:hover {
+          transform: translateY(-3px);
+        }
+        .btn-luxury::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          transition: 0.5s;
+        }
+        .btn-luxury:hover::after {
+          left: 100%;
+        }
+      }
+
+      /* Active state for mobile touch feedback */
+      .btn-luxury:active {
+        transform: scale(0.98);
       }
 
       .btn-luxury {
@@ -107,25 +142,6 @@
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
       
-      .btn-luxury::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: 0.5s;
-      }
-      
-      .btn-luxury:hover::after {
-        left: 100%;
-      }
-
-      .btn-luxury:hover {
-        transform: translateY(-3px);
-      }
-
       .input-underline { position: relative; }
       .input-underline::after {
         content: '';

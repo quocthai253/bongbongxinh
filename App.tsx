@@ -73,7 +73,7 @@ const SectionHeading = ({ badge, title, subtitle, light = false }: { badge?: str
         {badge}
       </span>
     )}
-    <h2 className={`text-3xl md:text-7xl font-serif font-bold mb-4 md:mb-8 leading-tight ${light ? 'text-white' : 'text-slate-900'} ${!light ? 'text-shimmer' : ''}`}>
+    <h2 className={`text-4xl md:text-7xl font-serif font-bold mb-4 md:mb-8 leading-tight ${light ? 'text-white' : 'text-slate-900'} ${!light ? 'text-shimmer' : ''}`}>
       {title}
     </h2>
     {subtitle && <p className={`text-sm md:text-lg max-w-2xl mx-auto leading-relaxed font-light ${light ? 'text-slate-300' : 'text-slate-500'}`}>{subtitle}</p>}
@@ -255,18 +255,18 @@ const App: React.FC = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl shadow-2xl transition-all duration-500 overflow-hidden ${isMenuOpen ? 'max-h-[500px] border-t border-slate-100' : 'max-h-0'}`}>
-          <div className="flex flex-col p-6 gap-5 text-xs font-black uppercase tracking-[0.2em] text-slate-700">
-            <a href="#dich-vu" onClick={() => setIsMenuOpen(false)} className="py-3 border-b border-slate-50 flex justify-between items-center">Dịch vụ <ArrowRight size={14} className="text-slate-300" /></a>
-            <a href="#in-logo-spotlight" onClick={() => setIsMenuOpen(false)} className="py-3 border-b border-slate-50 flex justify-between items-center">In Logo <ArrowRight size={14} className="text-slate-300" /></a>
-            <a href="#tu-van-ai" onClick={() => setIsMenuOpen(false)} className="py-3 border-b border-slate-50 flex justify-between items-center">Tư vấn AI <ArrowRight size={14} className="text-slate-300" /></a>
-            <a href="#lien-he" onClick={() => setIsMenuOpen(false)} className="blue-gradient text-white px-6 py-4 rounded-xl text-center shadow-lg mt-2">Liên hệ ngay</a>
+        <div className={`md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl shadow-2xl transition-all duration-500 overflow-hidden ${isMenuOpen ? 'max-h-[80vh] border-t border-slate-100' : 'max-h-0'}`}>
+          <div className="flex flex-col p-6 gap-5 text-xs font-black uppercase tracking-[0.2em] text-slate-700 pb-20">
+            <a href="#dich-vu" onClick={() => setIsMenuOpen(false)} className="py-4 border-b border-slate-50 flex justify-between items-center active:bg-slate-50">Dịch vụ <ArrowRight size={14} className="text-slate-300" /></a>
+            <a href="#in-logo-spotlight" onClick={() => setIsMenuOpen(false)} className="py-4 border-b border-slate-50 flex justify-between items-center active:bg-slate-50">In Logo <ArrowRight size={14} className="text-slate-300" /></a>
+            <a href="#tu-van-ai" onClick={() => setIsMenuOpen(false)} className="py-4 border-b border-slate-50 flex justify-between items-center active:bg-slate-50">Tư vấn AI <ArrowRight size={14} className="text-slate-300" /></a>
+            <a href="#lien-he" onClick={() => setIsMenuOpen(false)} className="blue-gradient text-white px-6 py-5 rounded-xl text-center shadow-lg mt-4 active:scale-95 transition-transform">Liên hệ ngay</a>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <header className="relative min-h-[90vh] md:min-h-screen flex items-center pt-28 md:pt-20 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+      <header className="relative min-h-[80dvh] md:min-h-screen flex items-center pt-24 md:pt-20 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50">
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 86c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm66-3c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-46-15c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm39-33c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zM25 26c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm18 40c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1z' fill='%2333C1E3' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E")` }}></div>
         
         <FloatingBalloon className="top-40 left-[10%] opacity-40 scale-125" color="cyan" delayClass="float-delay-1" />
@@ -289,10 +289,10 @@ const App: React.FC = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 md:gap-6 justify-center lg:justify-start pt-4 w-full px-4 md:px-0">
-              <a href="#lien-he" className="w-full sm:w-auto group relative px-8 md:px-12 py-4 md:py-5 bg-slate-900 text-white rounded-xl md:rounded-[2rem] font-bold overflow-hidden transition-all btn-luxury shadow-lg shadow-blue-900/20 text-center">
+              <a href="#lien-he" className="w-full sm:w-auto group relative px-8 md:px-12 py-4 md:py-5 bg-slate-900 text-white rounded-xl md:rounded-[2rem] font-bold overflow-hidden transition-all btn-luxury shadow-lg shadow-blue-900/20 text-center active:scale-95">
                 <span className="relative z-10 flex items-center justify-center gap-3 text-xs md:text-sm tracking-widest uppercase font-black">Nhận Báo Giá <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-2 transition-transform" /></span>
               </a>
-              <a href="#dich-vu" className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 bg-transparent text-slate-900 rounded-xl md:rounded-[2rem] font-bold border border-slate-200 hover:border-[#33C1E3] hover:text-[#33C1E3] transition-all text-xs md:text-sm tracking-widest uppercase font-black hover:bg-white hover:shadow-lg text-center">
+              <a href="#dich-vu" className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 bg-transparent text-slate-900 rounded-xl md:rounded-[2rem] font-bold border border-slate-200 hover:border-[#33C1E3] hover:text-[#33C1E3] transition-all text-xs md:text-sm tracking-widest uppercase font-black hover:bg-white hover:shadow-lg text-center active:scale-95">
                 Dịch Vụ Trọn Gói
               </a>
             </div>
@@ -300,8 +300,8 @@ const App: React.FC = () => {
           
           <div className="relative mt-8 lg:mt-0 reveal reveal-delay-200 px-4 md:px-0">
             <div className="absolute -inset-10 bg-[#33C1E3]/10 rounded-full filter blur-3xl animate-pulse hidden md:block"></div>
-            {/* Mobile Optimized Image Layout */}
-            <div className="md:hidden rounded-2xl overflow-hidden shadow-2xl luxury-shadow aspect-[4/5] relative">
+            {/* Mobile Optimized Image Layout - Slightly taller to fit screen better on mobile */}
+            <div className="md:hidden rounded-2xl overflow-hidden shadow-2xl luxury-shadow aspect-[4/5] relative mx-auto max-w-sm">
                <img src="https://images.unsplash.com/photo-1530103043960-ef38714abb15?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover" alt="Decoration Mobile" />
                <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/40 to-transparent"></div>
             </div>
@@ -333,7 +333,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Services Section */}
-      <section id="dich-vu" className="py-16 md:py-32 bg-white">
+      <section id="dich-vu" className="py-10 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <SectionHeading 
             badge="Premium Collections"
@@ -371,7 +371,7 @@ const App: React.FC = () => {
       </section>
 
       {/* FEATURED SERVICE SPOTLIGHT: Logo Printing */}
-      <section id="in-logo-spotlight" className="py-16 md:py-32 bg-slate-900 relative overflow-hidden">
+      <section id="in-logo-spotlight" className="py-10 md:py-32 bg-slate-900 relative overflow-hidden">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 w-[200px] md:w-[500px] h-[200px] md:h-[500px] bg-cyan-500/10 rounded-full blur-[80px] md:blur-[120px] -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-[200px] md:w-[500px] h-[200px] md:h-[500px] bg-blue-500/10 rounded-full blur-[80px] md:blur-[120px] translate-y-1/2 -translate-x-1/2 animate-pulse" style={{animationDelay: '2s'}}></div>
@@ -395,7 +395,7 @@ const App: React.FC = () => {
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-10 pt-2">
-                <div className="p-6 md:p-8 bg-white/5 border border-white/10 rounded-2xl md:rounded-[2.5rem] hover:bg-white/10 transition-colors group cursor-pointer">
+                <div className="p-6 md:p-8 bg-white/5 border border-white/10 rounded-2xl md:rounded-[2.5rem] hover:bg-white/10 transition-colors group cursor-pointer active:bg-white/10">
                   <div className="w-10 md:w-12 h-10 md:h-12 blue-gradient rounded-xl md:rounded-2xl flex items-center justify-center text-white mb-4 md:mb-6 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
                     <Layers className="w-5 md:w-6 h-5 md:h-6" />
                   </div>
@@ -403,7 +403,7 @@ const App: React.FC = () => {
                   <p className="text-xs md:text-sm text-slate-400 font-light">Độ phân giải cao, mực in chuyên dụng không bong tróc.</p>
                 </div>
                 
-                <div className="p-6 md:p-8 bg-white/5 border border-white/10 rounded-2xl md:rounded-[2.5rem] hover:bg-white/10 transition-colors group cursor-pointer">
+                <div className="p-6 md:p-8 bg-white/5 border border-white/10 rounded-2xl md:rounded-[2.5rem] hover:bg-white/10 transition-colors group cursor-pointer active:bg-white/10">
                   <div className="w-10 md:w-12 h-10 md:h-12 blue-gradient rounded-xl md:rounded-2xl flex items-center justify-center text-white mb-4 md:mb-6 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
                     <Target className="w-5 md:w-6 h-5 md:h-6" />
                   </div>
@@ -413,7 +413,7 @@ const App: React.FC = () => {
               </div>
               
               <div className="pt-4 text-center lg:text-left">
-                <a href="#lien-he" className="inline-flex items-center gap-4 bg-white text-slate-900 px-8 md:px-12 py-4 md:py-5 rounded-full font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] hover:bg-[#33C1E3] hover:text-white transition-all btn-luxury shadow-2xl w-full sm:w-auto justify-center">
+                <a href="#lien-he" className="inline-flex items-center gap-4 bg-white text-slate-900 px-8 md:px-12 py-4 md:py-5 rounded-full font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] hover:bg-[#33C1E3] hover:text-white transition-all btn-luxury shadow-2xl w-full sm:w-auto justify-center active:scale-95">
                    Nhận báo giá in Logo Sỉ <ArrowRight className="w-5 h-5" />
                 </a>
               </div>
@@ -447,7 +447,7 @@ const App: React.FC = () => {
       </section>
 
       {/* Why Us Section */}
-      <section id="vi-sao-chon" className="py-16 md:py-32 bg-slate-900 relative overflow-hidden border-t border-white/5">
+      <section id="vi-sao-chon" className="py-10 md:py-32 bg-slate-900 relative overflow-hidden border-t border-white/5">
         
         <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
           <SectionHeading 
@@ -471,7 +471,7 @@ const App: React.FC = () => {
             ))}
           </div>
           
-          <div className="mt-16 md:mt-32 rounded-2xl md:rounded-[4rem] overflow-hidden relative group h-[250px] md:h-[500px] shadow-2xl reveal">
+          <div className="mt-12 md:mt-32 rounded-2xl md:rounded-[4rem] overflow-hidden relative group h-[250px] md:h-[500px] shadow-2xl reveal">
             <img 
               src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=1600" 
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[3000ms]" 
@@ -484,7 +484,7 @@ const App: React.FC = () => {
                 <h3 className="text-2xl md:text-4xl font-serif font-bold mb-2 md:mb-4">Dấu Ấn Kỉ Niệm</h3>
                 <p className="text-slate-200 font-light text-xs md:text-base hidden md:block">Mỗi dự án là một kiệt tác tâm huyết từ đội ngũ nghệ nhân lành nghề.</p>
               </div>
-              <button className="bg-white text-slate-900 px-8 md:px-12 py-3 md:py-5 rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-[0.3em] shadow-2xl hover:bg-[#33C1E3] hover:text-white transition-all btn-luxury">
+              <button className="bg-white text-slate-900 px-8 md:px-12 py-3 md:py-5 rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-[0.3em] shadow-2xl hover:bg-[#33C1E3] hover:text-white transition-all btn-luxury active:scale-95">
                 Xem Thư Viện
               </button>
             </div>
@@ -493,7 +493,7 @@ const App: React.FC = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 md:py-32 bg-white relative">
+      <section className="py-10 md:py-32 bg-white relative">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <SectionHeading 
             badge="Testimonials"
@@ -533,10 +533,10 @@ const App: React.FC = () => {
                </div>
 
                <div className="flex justify-center md:justify-end gap-4 mt-8 md:mt-0 md:absolute md:bottom-12 md:right-12">
-                 <button onClick={prevTestimonial} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#33C1E3] hover:border-[#33C1E3] transition-all hover:-translate-y-1 shadow-md active:scale-95">
+                 <button onClick={prevTestimonial} className="w-12 h-12 md:w-12 md:h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#33C1E3] hover:border-[#33C1E3] transition-all hover:-translate-y-1 shadow-md active:scale-95 active:bg-slate-50">
                    <ChevronLeft size={20} />
                  </button>
-                 <button onClick={nextTestimonial} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#33C1E3] hover:border-[#33C1E3] transition-all hover:-translate-y-1 shadow-md active:scale-95">
+                 <button onClick={nextTestimonial} className="w-12 h-12 md:w-12 md:h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#33C1E3] hover:border-[#33C1E3] transition-all hover:-translate-y-1 shadow-md active:scale-95 active:bg-slate-50">
                    <ChevronRight size={20} />
                  </button>
                </div>
@@ -546,7 +546,7 @@ const App: React.FC = () => {
       </section>
 
       {/* AI Consulting Concierge */}
-      <section id="tu-van-ai" className="py-16 md:py-32 bg-[#F8FAFC]">
+      <section id="tu-van-ai" className="py-10 md:py-32 bg-[#F8FAFC]">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
           <div className="bg-white rounded-3xl md:rounded-[4rem] p-6 md:p-24 shadow-2xl border border-slate-100 relative overflow-hidden luxury-shadow reveal">
             <div className="absolute top-0 right-0 w-40 md:w-80 h-40 md:h-80 blue-gradient opacity-10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[60px] md:blur-[100px]"></div>
@@ -566,7 +566,7 @@ const App: React.FC = () => {
                 <div className="space-y-2 md:space-y-4 input-underline group">
                   <label className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2">Chủ đề tiệc</label>
                   <select 
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl px-5 md:px-6 py-3.5 md:py-5 text-slate-700 focus:outline-none focus:bg-white transition-all font-medium text-base cursor-pointer hover:bg-white appearance-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 text-slate-700 focus:outline-none focus:bg-white transition-all font-medium text-base cursor-pointer hover:bg-white appearance-none"
                     onChange={(e) => setFormData({...formData, partyType: e.target.value})}
                     value={formData.partyType}
                     required
@@ -584,7 +584,7 @@ const App: React.FC = () => {
                   <input 
                     type="text" 
                     placeholder="VD: 5 - 15 triệu"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl px-5 md:px-6 py-3.5 md:py-5 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:bg-white transition-all font-medium text-base"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:bg-white transition-all font-medium text-base"
                     onChange={(e) => setFormData({...formData, budget: e.target.value})}
                     value={formData.budget}
                     required
@@ -594,7 +594,7 @@ const App: React.FC = () => {
                   <button 
                     type="submit"
                     disabled={loadingAdvice}
-                    className="w-full blue-gradient text-white py-3.5 md:py-5 rounded-xl md:rounded-2xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] hover:shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 btn-luxury shadow-lg shadow-blue-500/30"
+                    className="w-full blue-gradient text-white py-4 md:py-5 rounded-xl md:rounded-2xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] hover:shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 btn-luxury shadow-lg shadow-blue-500/30 active:scale-95"
                   >
                     {loadingAdvice ? <Loader2 className="animate-spin w-5 h-5" /> : <>Bắt đầu tư vấn <ArrowRight className="w-4 h-4" /></>}
                   </button>
@@ -614,7 +614,7 @@ const App: React.FC = () => {
                   </div>
                   <div className="mt-8 md:mt-12 pt-8 md:pt-12 border-t border-[#33C1E3]/10 flex flex-col sm:flex-row justify-between items-center gap-6 md:gap-8 text-center md:text-left">
                     <p className="text-xs italic text-slate-400">Concept này được tạo riêng cho yêu cầu của bạn.</p>
-                    <a href="#lien-he" className="blue-gradient text-white px-8 md:px-10 py-3.5 md:py-4 rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all btn-luxury w-full sm:w-auto text-center">Chat Cùng Nghệ Nhân</a>
+                    <a href="#lien-he" className="blue-gradient text-white px-8 md:px-10 py-3.5 md:py-4 rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all btn-luxury w-full sm:w-auto text-center active:scale-95">Chat Cùng Nghệ Nhân</a>
                   </div>
                 </div>
               )}
@@ -624,7 +624,7 @@ const App: React.FC = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="lien-he" className="py-16 md:py-32 bg-white relative">
+      <section id="lien-he" className="py-10 md:py-32 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-12 md:gap-32 items-start">
           <div className="lg:sticky lg:top-32 text-center lg:text-left order-2 lg:order-1">
             <SectionHeading 
@@ -690,7 +690,7 @@ const App: React.FC = () => {
                   placeholder="Mô tả sự kiện..."
                 ></textarea>
               </div>
-              <button className="w-full py-4 md:py-6 blue-gradient text-white rounded-2xl md:rounded-3xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] hover:shadow-2xl transition-all duration-500 shadow-xl group btn-luxury mt-4">
+              <button className="w-full py-4 md:py-6 blue-gradient text-white rounded-2xl md:rounded-3xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] hover:shadow-2xl transition-all duration-500 shadow-xl group btn-luxury mt-4 active:scale-95">
                 <span className="flex items-center justify-center gap-4">Gửi Thông Tin <ArrowRight className="w-5 h-5 group-hover:translate-x-3 transition-transform" /></span>
               </button>
             </form>
@@ -699,7 +699,7 @@ const App: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-16 md:py-32">
+      <footer className="bg-slate-900 text-slate-400 py-10 md:py-32 pb-32 md:pb-32">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-10 md:gap-20 mb-12 md:mb-24">
             <div className="sm:col-span-2 space-y-8 md:space-y-12 reveal">
@@ -738,12 +738,12 @@ const App: React.FC = () => {
         </div>
       </footer>
 
-      {/* Persistent Sticky Contact */}
-      <div className="fixed bottom-4 md:bottom-12 right-4 md:right-12 z-50 flex flex-col gap-3 md:gap-6 pointer-events-none">
-        <a href="https://zalo.me/0909084174" target="_blank" className="pointer-events-auto w-12 h-12 md:w-16 md:h-16 bg-[#33C1E3] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform luxury-shadow group">
+      {/* Persistent Sticky Contact - Mobile Optimized with Safe Area */}
+      <div className="fixed bottom-safe right-4 md:right-12 z-50 flex flex-col gap-3 md:gap-6 pointer-events-none pb-2 md:pb-0">
+        <a href="https://zalo.me/0909084174" target="_blank" className="pointer-events-auto w-12 h-12 md:w-16 md:h-16 bg-[#33C1E3] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform luxury-shadow group active:scale-95">
           <span className="font-black text-[8px] md:text-[10px] tracking-widest">ZALO</span>
         </a>
-        <a href="tel:0909084174" className="pointer-events-auto w-12 h-12 md:w-16 md:h-16 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform animate-float shadow-cyan-500/20">
+        <a href="tel:0909084174" className="pointer-events-auto w-12 h-12 md:w-16 md:h-16 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform animate-float shadow-cyan-500/20 active:scale-95">
           <Phone className="w-5 h-5 md:w-7 md:h-7" />
         </a>
       </div>
