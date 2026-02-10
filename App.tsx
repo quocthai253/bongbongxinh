@@ -25,9 +25,12 @@ import {
   Zap,
   Target,
   BarChart3,
-  Layers
+  Layers,
+  ChevronLeft,
+  ChevronRight,
+  Quote
 } from 'lucide-react';
-import { Service, Feature } from './types';
+import { Service, Feature, Testimony } from './types';
 import { getDecorAdvice } from './services/geminiService';
 
 const LOGO_URL = "http://www.bongbongxinh.com/wp-content/uploads/2026/02/cropped-admin-ajax-1.png";
@@ -84,6 +87,7 @@ const App: React.FC = () => {
   const [adviceResult, setAdviceResult] = useState<string | null>(null);
   const [loadingAdvice, setLoadingAdvice] = useState(false);
   const [formData, setFormData] = useState({ partyType: '', budget: '', guests: '' });
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   // Scroll Observer for "Reveal" animation
   useEffect(() => {
@@ -169,6 +173,37 @@ const App: React.FC = () => {
     }
   ];
 
+  const testimonials: Testimony[] = [
+    {
+      id: 1,
+      name: "Nguyễn Thùy Chi",
+      role: "Cô Dâu - Tiệc Cưới Metropole",
+      text: "Bong Bóng Xinh đã biến đám cưới trong mơ của mình thành hiện thực. Backdrop chụp ảnh bong bóng kết hợp hoa tươi quá tuyệt vời, khách mời ai cũng khen ngợi sự tinh tế trong cách phối màu.",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      id: 2,
+      name: "Trần Minh Tuấn",
+      role: "CEO TechEvent",
+      text: "Dịch vụ cực kỳ chuyên nghiệp, thi công nhanh chóng và đúng hẹn dù sự kiện của chúng tôi tổ chức lúc sáng sớm. Cổng chào bong bóng in logo công ty rất ấn tượng, tạo điểm nhấn thương hiệu mạnh mẽ.",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      id: 3,
+      name: "Phạm Hương Giang",
+      role: "Mẹ bé Sóc",
+      text: "Bé nhà mình thích mê bữa tiệc sinh nhật chủ đề Elsa. Các chú trang trí rất nhiệt tình, vui vẻ và cẩn thận từng chi tiết nhỏ. Bóng bền màu suốt cả buổi tiệc ngoài trời. Cảm ơn team nhiều!",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      id: 4,
+      name: "Lê Văn Hùng",
+      role: "Quản lý nhà hàng Riverside",
+      text: "Đối tác tin cậy của nhà hàng chúng tôi trong nhiều năm qua. Mẫu mã luôn cập nhật mới, sáng tạo và giá cả rất hợp lý cho các gói trang trí tiệc trọn gói. Rất hài lòng về chất lượng.",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
+    }
+  ];
+
   const handleGetAdvice = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.partyType) return;
@@ -176,6 +211,14 @@ const App: React.FC = () => {
     const result = await getDecorAdvice(formData.partyType, formData.budget, formData.guests);
     setAdviceResult(result);
     setLoadingAdvice(false);
+  };
+
+  const nextTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
   return (
@@ -446,6 +489,69 @@ const App: React.FC = () => {
               <button className="bg-white text-slate-900 px-10 md:px-12 py-4 md:py-5 rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-[0.3em] shadow-2xl hover:bg-[#33C1E3] hover:text-white transition-all btn-luxury">
                 Xem Thư Viện Ảnh
               </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 md:py-32 bg-white relative">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <SectionHeading 
+            badge="Testimonials"
+            title="Khách Hàng Nói Về Chúng Tôi"
+            subtitle="Sự hài lòng của khách hàng là minh chứng rõ nét nhất cho chất lượng dịch vụ."
+          />
+
+          <div className="relative reveal">
+            <div className="absolute top-0 left-0 text-[#33C1E3]/10 transform -translate-x-1/4 -translate-y-1/4">
+              <Quote size={120} fill="currentColor" stroke="none" />
+            </div>
+
+            <div className="bg-[#F8FAFC] rounded-3xl md:rounded-[3rem] p-8 md:p-16 relative border border-slate-100 luxury-shadow">
+               <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center">
+                 <div className="shrink-0 relative">
+                   <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                     <img 
+                      src={testimonials[currentTestimonial].avatar} 
+                      alt={testimonials[currentTestimonial].name}
+                      className="w-full h-full object-cover"
+                     />
+                   </div>
+                   <div className="absolute -bottom-2 -right-2 bg-[#33C1E3] text-white p-2 rounded-full shadow-lg">
+                      <Star size={16} fill="currentColor" />
+                   </div>
+                 </div>
+                 
+                 <div className="flex-grow text-center md:text-left">
+                    <p className="text-xl md:text-2xl font-serif leading-relaxed italic text-slate-700 mb-6">
+                      "{testimonials[currentTestimonial].text}"
+                    </p>
+                    <div>
+                      <h4 className="text-lg font-bold text-slate-900">{testimonials[currentTestimonial].name}</h4>
+                      <p className="text-sm text-[#33C1E3] font-bold uppercase tracking-wider">{testimonials[currentTestimonial].role}</p>
+                    </div>
+                 </div>
+               </div>
+
+               <div className="flex justify-center md:justify-end gap-4 mt-8 md:mt-0 md:absolute md:bottom-12 md:right-12">
+                 <button onClick={prevTestimonial} className="w-12 h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#33C1E3] hover:border-[#33C1E3] transition-all hover:-translate-y-1 shadow-md">
+                   <ChevronLeft size={24} />
+                 </button>
+                 <button onClick={nextTestimonial} className="w-12 h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#33C1E3] hover:border-[#33C1E3] transition-all hover:-translate-y-1 shadow-md">
+                   <ChevronRight size={24} />
+                 </button>
+               </div>
+            </div>
+            
+            <div className="flex justify-center gap-2 mt-8">
+              {testimonials.map((_, idx) => (
+                <button 
+                  key={idx}
+                  onClick={() => setCurrentTestimonial(idx)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentTestimonial ? 'w-8 bg-[#33C1E3]' : 'bg-slate-200 hover:bg-slate-300'}`}
+                />
+              ))}
             </div>
           </div>
         </div>
