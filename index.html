@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
@@ -17,13 +17,11 @@
         --blue-deep: #007BA7;
         --luxury-dark: #0F172A;
         --luxury-bg: #F8FAFC;
-        /* Define safe area variables with fallbacks */
         --safe-bottom: env(safe-area-inset-bottom, 20px);
       }
       
       html {
-        scroll-behavior: smooth;
-        -webkit-tap-highlight-color: transparent; /* Remove grey tap highlight on iOS */
+        -webkit-tap-highlight-color: transparent;
       }
 
       body {
@@ -31,42 +29,51 @@
         background-color: var(--luxury-bg);
         color: var(--luxury-dark);
         overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       .font-serif {
         font-family: 'Cormorant Garamond', serif;
       }
 
-      /* iOS Safe Area Utilities */
-      .pb-safe {
-        padding-bottom: var(--safe-bottom);
-      }
-      .bottom-safe {
-        bottom: calc(1rem + var(--safe-bottom));
+      .pb-safe { padding-bottom: var(--safe-bottom); }
+      .bottom-safe { bottom: calc(1rem + var(--safe-bottom)); }
+
+      /* --- Professional Utilities --- */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
       }
 
-      /* --- ANIMATIONS --- */
+      .glass-dark {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .text-balance {
+        text-wrap: balance;
+      }
+
+      /* --- Animations --- */
       @keyframes float-natural {
         0%, 100% { transform: translate(0, 0) rotate(0deg); }
-        25% { transform: translate(10px, -15px) rotate(2deg); }
-        50% { transform: translate(-5px, -25px) rotate(-1deg); }
-        75% { transform: translate(-10px, -10px) rotate(1deg); }
+        33% { transform: translate(5px, -10px) rotate(1deg); }
+        66% { transform: translate(-5px, -5px) rotate(-1deg); }
       }
 
       .animate-float {
-        animation: float-natural 12s ease-in-out infinite;
-        will-change: transform;
+        animation: float-natural 8s ease-in-out infinite;
       }
-      
-      .float-delay-1 { animation-delay: -2s; animation-duration: 15s; }
-      .float-delay-2 { animation-delay: -5s; animation-duration: 18s; }
-      .float-delay-3 { animation-delay: -1s; animation-duration: 10s; }
 
-      /* Scroll Reveal Effect */
       .reveal {
         opacity: 0;
-        transform: translateY(40px);
-        transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
       }
       
       .reveal.active {
@@ -78,91 +85,40 @@
       .reveal-delay-200 { transition-delay: 0.2s; }
       .reveal-delay-300 { transition-delay: 0.3s; }
 
-      /* Shimmer Text Effect */
-      @keyframes shimmer {
-        0% { background-position: -200% center; }
-        100% { background-position: 200% center; }
-      }
-      
-      .text-shimmer {
-        background: linear-gradient(90deg, #0F172A 0%, #33C1E3 50%, #0F172A 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: shimmer 6s linear infinite;
-      }
-
       /* Utilities */
       .blue-gradient {
         background: linear-gradient(135deg, #33C1E3 0%, #007BA7 100%);
       }
-
+      
       .blue-text {
         background: linear-gradient(135deg, #33C1E3 0%, #007BA7 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
 
-      .luxury-shadow {
-        box-shadow: 0 20px 40px -5px rgba(15, 23, 42, 0.05);
-        transition: box-shadow 0.5s ease;
-      }
-      
-      /* Only apply hover effects on devices that support hover (not mobile) */
-      @media (hover: hover) {
-        .luxury-shadow:hover {
-          box-shadow: 0 30px 60px -10px rgba(51, 193, 227, 0.15);
-        }
-        .btn-luxury:hover {
-          transform: translateY(-3px);
-        }
-        .btn-luxury::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-          transition: 0.5s;
-        }
-        .btn-luxury:hover::after {
-          left: 100%;
-        }
+      .btn-luxury {
+        transition: all 0.3s ease;
       }
 
-      /* Active state for mobile touch feedback */
+      @media (hover: hover) {
+        .btn-luxury:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 15px 30px -5px rgba(51, 193, 227, 0.3);
+        }
+      }
+      
       .btn-luxury:active {
         transform: scale(0.98);
       }
 
-      .btn-luxury {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      .input-modern {
+        background: transparent;
+        border-bottom: 1px solid #CBD5E1;
+        transition: border-color 0.3s ease;
       }
-      
-      .input-underline { position: relative; }
-      .input-underline::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: #33C1E3;
-        transition: width 0.4s ease;
-      }
-      .input-underline:focus-within::after { width: 100%; }
-      
-      /* Balloon CSS Shape */
-      .balloon-shape {
-        border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-      }
-      .balloon-tail {
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-bottom: 10px solid;
+      .input-modern:focus {
+        border-color: #33C1E3;
+        outline: none;
       }
     </style>
 <script type="importmap">
@@ -179,7 +135,7 @@
 }
 </script>
 </head>
-  <body class="selection:bg-[#33C1E3]/20 selection:text-[#007BA7]">
+  <body class="selection:bg-[#33C1E3] selection:text-white">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

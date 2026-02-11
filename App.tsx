@@ -1,9 +1,8 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Heart, 
   PartyPopper, 
-  Store, 
   Gift, 
   Sparkles, 
   Clock, 
@@ -16,28 +15,25 @@ import {
   ArrowRight,
   Menu,
   X,
-  Send,
   Loader2,
   Star,
   Award,
-  Waves,
-  Printer,
-  Zap,
-  Target,
-  BarChart3,
   Layers,
-  ChevronLeft,
+  Target,
   ChevronRight,
-  Quote
+  Send,
+  Sparkle,
+  MessageSquare
 } from 'lucide-react';
 import { Service, Feature, Testimony } from './types';
 import { getDecorAdvice } from './services/geminiService';
 
 const LOGO_URL = "http://www.bongbongxinh.com/wp-content/uploads/2026/02/cropped-admin-ajax-1.png";
+const NEW_CONSULT_IMG = "http://www.bongbongxinh.com/wp-content/uploads/2026/02/Tu-van-mien-phi.png";
+const IN_LOGO_LINK = "https://www.bongbongxinh.com/bong-bong-in-logo-2/";
 
-// --- Sub-components ---
+// --- Components ---
 
-// Enhanced Floating Balloon with delay support for natural movement
 const FloatingBalloon = ({ 
   className, 
   size = "w-14 h-20", 
@@ -56,40 +52,40 @@ const FloatingBalloon = ({
     : "radial-gradient(circle at 30% 30%, #FFFFFF, #F1F5F9, #CBD5E1)";
   
   return (
-    <div className={`absolute pointer-events-none animate-float ${delayClass} hidden md:block ${className}`}>
-      <div className={`${size} rounded-[50%_50%_50%_50%/40%_40%_60%_60%] relative shadow-2xl overflow-hidden backdrop-blur-[1px]`} style={{ background: gradient }}>
-        <div className="absolute top-[15%] left-[15%] w-[20%] h-[20%] bg-white/40 rounded-full blur-[3px]"></div>
-        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[10px] border-b-inherit opacity-80" style={{ borderBottomColor: '#33C1E3' }}></div>
-        <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[0.5px] h-12 bg-gradient-to-b from-cyan-400/50 to-transparent"></div>
+    <div className={`absolute pointer-events-none animate-float ${delayClass} hidden lg:block ${className}`}>
+      <div className={`${size} rounded-[50%_50%_50%_50%/40%_40%_60%_60%] relative shadow-lg opacity-80 backdrop-blur-sm`} style={{ background: gradient }}>
+        <div className="absolute top-[15%] left-[15%] w-[20%] h-[20%] bg-white/40 rounded-full blur-[2px]"></div>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[8px] border-b-inherit opacity-80" style={{ borderBottomColor: '#33C1E3' }}></div>
       </div>
     </div>
   );
 };
 
-const SectionHeading = ({ badge, title, subtitle, light = false }: { badge?: string, title: string, subtitle?: string, light?: boolean }) => (
-  <div className="text-center mb-10 md:mb-24 px-4 reveal">
+const SectionHeading = ({ badge, title, subtitle, light = false, align = "center" }: { badge?: string, title: string, subtitle?: string, light?: boolean, align?: "center" | "left" }) => (
+  <div className={`mb-12 md:mb-20 reveal ${align === "center" ? "text-center" : "text-left"}`}>
     {badge && (
-      <span className="inline-block py-1.5 px-4 md:py-2 md:px-6 rounded-full border border-[#33C1E3]/30 text-[#33C1E3] text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] mb-4 md:mb-8 bg-white/50 backdrop-blur-sm">
+      <span className={`inline-flex items-center gap-2 py-1.5 px-4 rounded-full border ${light ? 'border-white/20 text-white bg-white/10' : 'border-slate-200 text-slate-600 bg-white'} text-[11px] font-bold uppercase tracking-[0.2em] mb-6 backdrop-blur-md shadow-sm`}>
         {badge}
       </span>
     )}
-    <h2 className={`text-4xl md:text-7xl font-serif font-bold mb-4 md:mb-8 leading-tight ${light ? 'text-white' : 'text-slate-900'} ${!light ? 'text-shimmer' : ''}`}>
+    <h2 className={`text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6 leading-[1.1] ${light ? 'text-white' : 'text-slate-900'} text-balance`}>
       {title}
     </h2>
-    {subtitle && <p className={`text-sm md:text-lg max-w-2xl mx-auto leading-relaxed font-light ${light ? 'text-slate-300' : 'text-slate-500'}`}>{subtitle}</p>}
-    <div className="w-16 md:w-32 h-1 blue-gradient mx-auto mt-6 md:mt-10 rounded-full opacity-60"></div>
+    {subtitle && <p className={`text-base md:text-lg leading-relaxed font-light ${light ? 'text-slate-300' : 'text-slate-500'} ${align === "center" ? "mx-auto max-w-2xl" : "max-w-xl"}`}>{subtitle}</p>}
   </div>
 );
 
 const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [adviceResult, setAdviceResult] = useState<string | null>(null);
-  const [loadingAdvice, setLoadingAdvice] = useState(false);
-  const [formData, setFormData] = useState({ partyType: '', budget: '', guests: '' });
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  
+  // AI Form State
+  const [partyType, setPartyType] = useState('Thôi nôi');
+  const [budget, setBudget] = useState('Dưới 5 triệu');
+  const [guestCount, setGuestCount] = useState('30-50 khách');
+  const [aiAdvice, setAiAdvice] = useState<string | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
-  // Scroll Observer for "Reveal" animation
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -112,64 +108,40 @@ const App: React.FC = () => {
     };
   }, []);
 
+  const handleGetAiAdvice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsAiLoading(true);
+    const advice = await getDecorAdvice(partyType, budget, guestCount);
+    setAiAdvice(advice);
+    setIsAiLoading(false);
+    
+    // Smooth scroll to advice
+    setTimeout(() => {
+      document.getElementById('ai-result')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
   const services: Service[] = [
     {
       id: '1',
       title: 'Sinh Nhật & Thôi Nôi',
-      description: 'Hiện thực hóa thế giới thần tiên với những cụm bóng nghệ thuật tinh xảo cho bé yêu.',
+      description: 'Hiện thực hóa thế giới thần tiên với concept pastel ngọt ngào, thiết kế riêng cho từng bé.',
       icon: <PartyPopper className="w-5 h-5" />,
-      image: 'https://images.unsplash.com/photo-1530103043960-ef38714abb15?auto=format&fit=crop&q=80&w=800'
+      image: 'https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&q=80&w=800'
     },
     {
       id: '2',
-      title: 'Tiệc Cưới & Kỷ Niệm',
-      description: 'Lộng lẫy và tinh khôi với các thiết kế bóng Jumbo phối cùng hoa tươi và lụa cao cấp.',
-      icon: <Heart className="w-5 h-5" />,
-      image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800'
-    },
-    {
-      id: '3',
-      title: 'Sự Kiện Doanh Nghiệp',
-      description: 'Thu hút mọi ánh nhìn với cổng chào rực rỡ và backdrop chuyên nghiệp cho khai trương.',
+      title: 'Sự Kiện & Khai Trương',
+      description: 'Nâng tầm thương hiệu với cổng chào bong bóng nghệ thuật và backdrop check-in chuyên nghiệp.',
       icon: <Award className="w-5 h-5" />,
       image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=800'
     },
     {
-      id: '4',
-      title: 'In Logo Bong Bóng Bay',
-      description: 'Giải pháp quảng bá thương hiệu sáng tạo với in logo sắc nét trên bong bóng bay cao cấp.',
-      icon: <Printer className="w-5 h-5" />,
-      image: 'https://drawmarketing.wordpress.com/wp-content/uploads/2020/07/in-bong-bc3b3ng-theo-yc3aau-c-u5.jpg?w=1024'
-    },
-    {
-      id: '5',
-      title: 'Bóng Jumbo In Tên',
-      description: 'Dòng sản phẩm quà tặng cá nhân hóa đỉnh cao với chất lượng mực in bền bỉ theo thời gian.',
-      icon: <Gift className="w-5 h-5" />,
-      image: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&q=80&w=800'
-    }
-  ];
-
-  const features: Feature[] = [
-    {
-      title: 'Sáng Tạo',
-      description: 'Concept riêng biệt, độc đáo.',
-      icon: <Sparkles className="text-[#33C1E3]" />
-    },
-    {
-      title: 'Thần Tốc',
-      description: 'Cam kết tiến độ tuyệt đối.',
-      icon: <Clock className="text-[#33C1E3]" />
-    },
-    {
-      title: 'An Toàn',
-      description: 'Vật liệu an toàn, thân thiện.',
-      icon: <ShieldCheck className="text-[#33C1E3]" />
-    },
-    {
-      title: 'Chuyên Sâu',
-      description: 'Khảo sát và lên bản vẽ 3D.',
-      icon: <CheckCircle2 className="text-[#33C1E3]" />
+      id: '3',
+      title: 'In Logo Quảng Bá',
+      description: 'Giải pháp Marketing hiệu quả với bong bóng in logo sắc nét, độ bền cao cho doanh nghiệp.',
+      icon: <Target className="w-5 h-5" />,
+      image: NEW_CONSULT_IMG
     }
   ];
 
@@ -177,192 +149,166 @@ const App: React.FC = () => {
     {
       id: 1,
       name: "Nguyễn Thùy Chi",
-      role: "Cô Dâu - Tiệc Cưới Metropole",
-      text: "Bong Bóng Xinh đã biến đám cưới trong mơ của mình thành hiện thực. Backdrop chụp ảnh bong bóng kết hợp hoa tươi quá tuyệt vời.",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"
+      role: "Mẹ bé Annie - Tiệc Thôi Nôi",
+      text: "Mình rất kỹ tính nhưng Bong Bóng Xinh đã thuyết phục hoàn toàn. Tông màu pastel thực tế còn đẹp hơn trong ảnh demo 3D.",
+      avatar: NEW_CONSULT_IMG
     },
     {
       id: 2,
       name: "Trần Minh Tuấn",
       role: "CEO TechEvent",
-      text: "Dịch vụ cực kỳ chuyên nghiệp, thi công nhanh chóng và đúng hẹn. Cổng chào bong bóng in logo công ty rất ấn tượng.",
+      text: "Hợp tác với bên em nhiều sự kiện khai trương, chưa bao giờ thất vọng. Đội ngũ support cực kỳ nhanh và chuyên nghiệp.",
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200"
     },
     {
       id: 3,
       name: "Phạm Hương Giang",
-      role: "Mẹ bé Sóc",
-      text: "Bé nhà mình thích mê bữa tiệc sinh nhật chủ đề Elsa. Các chú trang trí rất nhiệt tình, vui vẻ và cẩn thận từng chi tiết nhỏ.",
+      role: "Khách hàng thân thiết",
+      text: "Giá cả rất hợp lý so với chất lượng nhận được. Các bạn nhân viên thi công dọn dẹp sạch sẽ sau khi tiệc tan.",
       avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200"
-    },
-    {
-      id: 4,
-      name: "Lê Văn Hùng",
-      role: "Quản lý nhà hàng Riverside",
-      text: "Đối tác tin cậy của nhà hàng chúng tôi. Mẫu mã luôn cập nhật mới, sáng tạo và giá cả rất hợp lý cho các gói trang trí.",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
     }
   ];
 
-  const handleGetAdvice = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.partyType) return;
-    setLoadingAdvice(true);
-    const result = await getDecorAdvice(formData.partyType, formData.budget, formData.guests);
-    setAdviceResult(result);
-    setLoadingAdvice(false);
-  };
-
-  const nextTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const prevTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
   return (
-    <div className="min-h-screen">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-white/90 backdrop-blur-xl shadow-xl py-2 md:py-3' : 'bg-transparent py-4 md:py-8'}`}>
-        <div className="max-w-7xl mx-auto px-4 md:px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2 md:gap-4 group cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-            <div className="bg-white p-1.5 md:p-2 rounded-xl shadow-md border border-slate-100 transition-transform group-hover:scale-105">
-              <img src={LOGO_URL} alt="Bong Bóng Xinh" className={`transition-all duration-500 ${scrolled ? 'h-7 md:h-10' : 'h-8 md:h-14'}`} />
-            </div>
-            <div className="block">
-              <span className={`block text-base md:text-xl font-serif font-bold tracking-wider leading-none text-slate-900`}>BONG BÓNG XINH</span>
-              <span className="text-[8px] md:text-[9px] font-black tracking-[0.2em] md:tracking-[0.4em] text-[#33C1E3] uppercase block mt-0.5">Exquisite Decoration</span>
+    <div className="min-h-screen font-sans bg-white">
+      {/* Navbar */}
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-lg shadow-sm py-3' : 'bg-transparent py-6'}`}>
+        <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+            <img src={LOGO_URL} alt="Bong Bong Xinh" className="w-10 h-10 rounded-lg shadow-md object-contain bg-white p-1" />
+            <div>
+              <span className={`block text-lg font-bold tracking-tight leading-none ${scrolled ? 'text-slate-900' : 'text-slate-800'}`}>BONG BÓNG XINH</span>
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#33C1E3] uppercase block">Elite Event Decoration</span>
             </div>
           </div>
           
-          <div className="hidden md:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-slate-700">
-            {['dich-vu', 'in-logo-spotlight', 'tu-van-ai', 'lien-he'].map((item) => (
+          <div className="hidden md:flex items-center gap-8 text-[13px] font-semibold text-slate-600">
+            {['Dịch vụ', 'Tư vấn AI', 'In Logo', 'Liên hệ'].map((item, i) => (
               <a 
-                key={item} 
-                href={`#${item}`} 
-                className={`${item === 'lien-he' ? 'blue-gradient text-white px-8 py-3.5 rounded-full hover:shadow-2xl hover:scale-105 transition-all active:scale-95 btn-luxury' : 'hover:text-[#33C1E3] transition-colors relative group py-2'}`}
+                key={i} 
+                href={item === 'In Logo' ? IN_LOGO_LINK : `#${item === 'Dịch vụ' ? 'dich-vu' : item === 'Tư vấn AI' ? 'ai-consultant' : 'lien-he'}`}
+                {...(item === 'In Logo' ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="hover:text-[#33C1E3] transition-colors uppercase tracking-wide"
               >
-                {item === 'dich-vu' ? 'Dịch vụ' : item === 'in-logo-spotlight' ? 'In Logo' : item === 'tu-van-ai' ? 'Tư vấn' : 'Liên hệ ngay'}
-                {item !== 'lien-he' && <span className="absolute bottom-0 left-0 w-0 h-0.5 blue-gradient transition-all duration-300 group-hover:w-full"></span>}
+                {item}
               </a>
             ))}
+            <a 
+              href="#ai-consultant" 
+              className="bg-slate-900 text-white px-6 py-2.5 rounded-full hover:bg-[#33C1E3] transition-all shadow-lg hover:shadow-cyan-500/30 flex items-center gap-2"
+            >
+              Nhận Tư Vấn <ArrowRight size={14} />
+            </a>
           </div>
 
-          <button className="md:hidden p-2 text-slate-900 bg-white/50 backdrop-blur rounded-lg border border-slate-200 active:bg-slate-100" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          <button className="md:hidden p-2 text-slate-900" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl shadow-2xl transition-all duration-500 overflow-hidden ${isMenuOpen ? 'max-h-[80vh] border-t border-slate-100' : 'max-h-0'}`}>
-          <div className="flex flex-col p-6 gap-5 text-xs font-black uppercase tracking-[0.2em] text-slate-700 pb-20">
-            <a href="#dich-vu" onClick={() => setIsMenuOpen(false)} className="py-4 border-b border-slate-50 flex justify-between items-center active:bg-slate-50">Dịch vụ <ArrowRight size={14} className="text-slate-300" /></a>
-            <a href="#in-logo-spotlight" onClick={() => setIsMenuOpen(false)} className="py-4 border-b border-slate-50 flex justify-between items-center active:bg-slate-50">In Logo <ArrowRight size={14} className="text-slate-300" /></a>
-            <a href="#tu-van-ai" onClick={() => setIsMenuOpen(false)} className="py-4 border-b border-slate-50 flex justify-between items-center active:bg-slate-50">Tư vấn AI <ArrowRight size={14} className="text-slate-300" /></a>
-            <a href="#lien-he" onClick={() => setIsMenuOpen(false)} className="blue-gradient text-white px-6 py-5 rounded-xl text-center shadow-lg mt-4 active:scale-95 transition-transform">Liên hệ ngay</a>
+        <div className={`md:hidden absolute top-full left-0 w-full bg-white shadow-xl transition-all duration-300 overflow-hidden ${isMenuOpen ? 'max-h-[80vh]' : 'max-h-0'}`}>
+          <div className="flex flex-col p-6 gap-4 text-sm font-semibold text-slate-700">
+            <a href="#dich-vu" onClick={() => setIsMenuOpen(false)} className="py-3 border-b border-slate-100">Dịch vụ</a>
+            <a href="#ai-consultant" onClick={() => setIsMenuOpen(false)} className="py-3 border-b border-slate-100">Tư vấn AI Miễn Phí</a>
+            <a href={IN_LOGO_LINK} target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="py-3 border-b border-slate-100 flex items-center justify-between">In Logo Quảng Cáo <ArrowRight size={14} className="text-[#33C1E3]" /></a>
+            <a href="#lien-he" onClick={() => setIsMenuOpen(false)} className="py-3 text-[#33C1E3]">Liên hệ báo giá</a>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <header className="relative min-h-[80dvh] md:min-h-screen flex items-center pt-24 md:pt-20 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50">
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 86c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm66-3c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-46-15c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm39-33c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zM25 26c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm18 40c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1z' fill='%2333C1E3' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E")` }}></div>
+      <header className="relative pt-32 pb-20 md:pt-48 md:pb-40 overflow-hidden bg-slate-50">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(51,193,227,0.05),transparent_40%)]"></div>
+        <FloatingBalloon className="top-32 left-[8%]" color="cyan" delayClass="float-delay-1" />
+        <FloatingBalloon className="bottom-20 right-[12%]" color="navy" delayClass="float-delay-2" />
         
-        <FloatingBalloon className="top-40 left-[10%] opacity-40 scale-125" color="cyan" delayClass="float-delay-1" />
-        <FloatingBalloon className="bottom-40 right-[15%] opacity-30 scale-150" color="navy" delayClass="float-delay-2" />
-        <FloatingBalloon className="top-60 right-[5%] opacity-20 scale-110" color="white" delayClass="float-delay-3" />
-        
-        <div className="max-w-7xl mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-10 md:gap-20 items-center relative z-10 pb-10 md:pb-0">
-          <div className="space-y-6 md:space-y-10 text-center lg:text-left reveal">
-            <div className="inline-flex items-center gap-3 bg-white px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-cyan-100 shadow-sm mx-auto lg:mx-0 hover:scale-105 transition-transform">
-              <Waves className="w-3 h-3 md:w-4 md:h-4 text-[#33C1E3] animate-pulse" />
-              <span className="text-[8px] md:text-[10px] font-black tracking-[0.3em] text-[#33C1E3] uppercase">Luxury Balloon Artistry</span>
+        <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left reveal">
+              <div className="inline-flex items-center gap-2 bg-white border border-slate-200 px-4 py-1.5 rounded-full shadow-sm mb-8">
+                <Sparkle className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
+                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Nghệ Thuật Bong Bóng Đỉnh Cao</span>
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-slate-900 leading-[1] tracking-tight mb-8">
+                Không Gian <br/>
+                <span className="blue-text italic">Của Những Giấc Mơ</span>
+              </h1>
+              
+              <p className="text-lg text-slate-600 font-light leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
+                Từ tiệc thôi nôi ngọt ngào đến sự kiện doanh nghiệp đẳng cấp. Bong Bóng Xinh hiện thực hóa mọi ý tưởng bằng sự tận tâm và sáng tạo không giới hạn.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a href="#ai-consultant" className="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-[#33C1E3] transition-all shadow-xl hover:shadow-cyan-500/20 active:scale-95 flex items-center justify-center gap-2">
+                  Tư Vấn AI Miễn Phí <ArrowRight size={18} />
+                </a>
+                <a href="#dich-vu" className="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-xl font-bold hover:border-slate-400 transition-all active:scale-95 flex items-center justify-center">
+                  Khám Phá Dịch Vụ
+                </a>
+              </div>
             </div>
-            
-            <h1 className="text-4xl sm:text-5xl md:text-8xl font-serif font-bold text-slate-900 leading-[1.1] md:leading-[1.05]">
-              Nâng tầm <br /><span className="blue-text">Khoảnh khắc</span> mơ ước
-            </h1>
-            
-            <p className="text-base md:text-xl text-slate-500 md:max-w-lg leading-relaxed font-light mx-auto lg:mx-0 px-4 md:px-0">
-              Bong Bóng Xinh mang đến những trải nghiệm trang trí thượng lưu, nơi mỗi quả bóng là một tác phẩm nghệ thuật.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-6 justify-center lg:justify-start pt-4 w-full px-4 md:px-0">
-              <a href="#lien-he" className="w-full sm:w-auto group relative px-8 md:px-12 py-4 md:py-5 bg-slate-900 text-white rounded-xl md:rounded-[2rem] font-bold overflow-hidden transition-all btn-luxury shadow-lg shadow-blue-900/20 text-center active:scale-95">
-                <span className="relative z-10 flex items-center justify-center gap-3 text-xs md:text-sm tracking-widest uppercase font-black">Nhận Báo Giá <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-2 transition-transform" /></span>
-              </a>
-              <a href="#dich-vu" className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 bg-transparent text-slate-900 rounded-xl md:rounded-[2rem] font-bold border border-slate-200 hover:border-[#33C1E3] hover:text-[#33C1E3] transition-all text-xs md:text-sm tracking-widest uppercase font-black hover:bg-white hover:shadow-lg text-center active:scale-95">
-                Dịch Vụ Trọn Gói
-              </a>
-            </div>
-          </div>
-          
-          <div className="relative mt-8 lg:mt-0 reveal reveal-delay-200 px-4 md:px-0">
-            <div className="absolute -inset-10 bg-[#33C1E3]/10 rounded-full filter blur-3xl animate-pulse hidden md:block"></div>
-            {/* Mobile Optimized Image Layout - Slightly taller to fit screen better on mobile */}
-            <div className="md:hidden rounded-2xl overflow-hidden shadow-2xl luxury-shadow aspect-[4/5] relative mx-auto max-w-sm">
-               <img src="https://images.unsplash.com/photo-1530103043960-ef38714abb15?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover" alt="Decoration Mobile" />
-               <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/40 to-transparent"></div>
-            </div>
-            {/* Desktop Grid Layout */}
-            <div className="hidden md:grid grid-cols-12 gap-6">
-              <div className="col-span-6 space-y-6 pt-16">
-                <div className="rounded-[3rem] overflow-hidden shadow-2xl luxury-shadow group relative transform hover:-translate-y-2 transition-all duration-700">
-                  <img src="https://m.media-amazon.com/images/I/61BBgKjcJjL.jpg" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="Bong bóng hoa cúc trắng" fetchPriority="high" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/40 to-transparent"></div>
+
+            <div className="relative reveal reveal-delay-200">
+              <div className="relative z-10 grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <img 
+                    src="https://images.unsplash.com/photo-1602631985686-1bb0e6a8696e?auto=format&fit=crop&q=80&w=600" 
+                    alt="Birthday Event" 
+                    className="rounded-3xl shadow-2xl w-full h-80 object-cover"
+                  />
+                  <div className="bg-[#33C1E3] p-8 rounded-3xl text-white shadow-xl">
+                    <p className="text-4xl font-bold mb-1">10k+</p>
+                    <p className="text-xs uppercase tracking-widest font-bold opacity-80">Khách Hàng Tin Tưởng</p>
+                  </div>
                 </div>
-                <div className="rounded-[3rem] overflow-hidden shadow-2xl luxury-shadow group aspect-[4/5] relative transform hover:-translate-y-2 transition-all duration-700">
-                  <img src="https://images.unsplash.com/photo-1530103043960-ef38714abb15?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="Decoration 2" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/40 to-transparent"></div>
+                <div className="space-y-4 pt-12">
+                  <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-xl">
+                    <p className="text-4xl font-bold mb-1">Top 1</p>
+                    <p className="text-xs uppercase tracking-widest font-bold opacity-80">Decor Tại Việt Nam</p>
+                  </div>
+                  <img 
+                    src="http://www.bongbongxinh.com/wp-content/uploads/2026/02/bong-bong-hoa-cuc-trang-hoa-mi-bong-mai-huong-duong-mat-cuoi-trang-tri-sinh-nhat-ngay-le-P4808-1645055300693.jpg" 
+                    alt="Balloon Art" 
+                    className="rounded-3xl shadow-2xl w-full h-80 object-cover"
+                  />
                 </div>
               </div>
-              <div className="col-span-6 space-y-6">
-                <div className="rounded-[3rem] overflow-hidden shadow-2xl luxury-shadow group aspect-square relative transform hover:-translate-y-2 transition-all duration-700">
-                  <img src="https://images.unsplash.com/photo-1541410965313-d53b3c16ef17?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="Decoration 3" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/40 to-transparent"></div>
-                </div>
-                <div className="rounded-[3rem] overflow-hidden shadow-2xl luxury-shadow group relative transform hover:-translate-y-2 transition-all duration-700">
-                  <img src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="Decoration 4" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/40 to-transparent"></div>
-                </div>
-              </div>
+              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-gradient-to-tr from-cyan-100/30 to-blue-100/30 rounded-full blur-[100px]"></div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Services Section */}
-      <section id="dich-vu" className="py-10 md:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+      {/* Services */}
+      <section id="dich-vu" className="py-24 md:py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
           <SectionHeading 
-            badge="Premium Collections"
-            title="Dịch Vụ Đặc Quyền"
-            subtitle="Mỗi bữa tiệc là một tác phẩm duy nhất, được đo ni đóng giày theo gu thẩm mỹ của từng khách hàng."
+            badge="Dịch Vụ Đẳng Cấp"
+            title="Chúng Tôi Có Thể Làm Gì?"
+            subtitle="Mỗi chi tiết đều được chăm chút tỉ mỉ để tạo nên khoảnh khắc khó quên."
           />
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-12">
+          <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, idx) => (
-              <div key={service.id} className={`reveal reveal-delay-${(idx % 3) * 100} group bg-[#F8FAFC] rounded-2xl md:rounded-[3rem] overflow-hidden transition-all duration-500 border border-slate-100 flex flex-col hover:-translate-y-2 md:hover:-translate-y-4 luxury-shadow`}>
-                <div className="h-48 md:h-72 overflow-hidden relative">
+              <div key={idx} className="group bg-slate-50 rounded-[2.5rem] overflow-hidden hover:bg-white transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.12)] border border-slate-100 reveal">
+                <div className="aspect-[4/3] overflow-hidden">
                   <img 
                     src={service.image} 
                     alt={service.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
-                    loading="lazy" 
-                    decoding="async" 
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors"></div>
-                  <div className="absolute top-4 md:top-8 left-4 md:left-8 w-10 md:w-12 h-10 md:h-12 bg-white/90 backdrop-blur rounded-xl md:rounded-2xl flex items-center justify-center text-[#33C1E3] shadow-lg group-hover:scale-110 transition-transform duration-500">
+                </div>
+                <div className="p-10">
+                  <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-[#33C1E3] shadow-sm mb-8 group-hover:bg-[#33C1E3] group-hover:text-white transition-all duration-500">
                     {service.icon}
                   </div>
-                </div>
-                <div className="p-6 md:p-10 flex flex-col flex-grow">
-                  <h3 className="text-xl md:text-2xl font-serif font-bold text-slate-900 mb-3 md:mb-5 group-hover:text-[#33C1E3] transition-colors">{service.title}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-6 md:mb-8 flex-grow font-light line-clamp-3 md:line-clamp-none">{service.description}</p>
-                  <button className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-[#33C1E3] flex items-center gap-3 group/btn">
-                    Khám phá <div className="w-8 md:w-10 h-[1px] bg-[#33C1E3] group-hover/btn:w-16 transition-all duration-500"></div>
-                  </button>
+                  <h3 className="text-2xl font-serif font-bold text-slate-900 mb-4">{service.title}</h3>
+                  <p className="text-slate-500 leading-relaxed mb-8 font-light">{service.description}</p>
+                  <a href={service.title === 'In Logo Quảng Bá' ? IN_LOGO_LINK : "#lien-he"} {...(service.title === 'In Logo Quảng Bá' ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="inline-flex items-center text-[13px] font-bold text-slate-900 uppercase tracking-widest group/link">
+                    Chi Tiết <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover/link:translate-x-1.5" />
+                  </a>
                 </div>
               </div>
             ))}
@@ -370,252 +316,125 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* FEATURED SERVICE SPOTLIGHT: Logo Printing */}
-      <section id="in-logo-spotlight" className="py-10 md:py-32 bg-slate-900 relative overflow-hidden">
-        {/* Background Accents */}
-        <div className="absolute top-0 right-0 w-[200px] md:w-[500px] h-[200px] md:h-[500px] bg-cyan-500/10 rounded-full blur-[80px] md:blur-[120px] -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[200px] md:w-[500px] h-[200px] md:h-[500px] bg-blue-500/10 rounded-full blur-[80px] md:blur-[120px] translate-y-1/2 -translate-x-1/2 animate-pulse" style={{animationDelay: '2s'}}></div>
+      {/* AI Consultant Section - NEW */}
+      <section id="ai-consultant" className="py-24 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,#33C1E3,transparent_30%)]"></div>
+        </div>
         
-        <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 md:gap-24 items-center">
-            <div className="space-y-8 md:space-y-12 reveal">
-              <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-5 md:px-6 py-2.5 md:py-3 rounded-full backdrop-blur-md">
-                <Printer className="w-4 md:w-5 h-4 md:h-5 text-[#33C1E3]" />
-                <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white">Đối tác doanh nghiệp</span>
-              </div>
-              
-              <h2 className="text-3xl md:text-8xl font-serif font-bold text-white leading-[1.2] md:leading-[1.1]">
-                Chiến lược <br />
-                <span className="blue-text italic font-normal">Quảng Bá</span> <br />
-                Bằng Bong Bóng In Logo
+        <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div className="reveal">
+              <span className="inline-flex items-center gap-2 text-[#33C1E3] font-bold tracking-widest uppercase text-xs mb-6">
+                <Sparkles size={16} /> Chuyên Gia AI Của Bạn
+              </span>
+              <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-8 leading-tight">
+                Lên Ý Tưởng Tiệc <br/> 
+                <span className="text-slate-500 italic">Chỉ Trong 30 Giây</span>
               </h2>
-              
-              <p className="text-base md:text-xl text-slate-400 font-light leading-relaxed max-w-xl">
-                Dịch vụ in logo chuyên nghiệp của Bong Bóng Xinh biến những quả bóng bay thành "đại sứ thương hiệu" linh động.
+              <p className="text-slate-400 text-lg font-light mb-10 leading-relaxed">
+                Đừng lo lắng nếu bạn chưa có ý tưởng. Trí tuệ nhân tạo của Bong Bóng Xinh sẽ gợi ý phong cách trang trí phù hợp nhất với ngân sách và quy mô bữa tiệc của bạn.
               </p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-10 pt-2">
-                <div className="p-6 md:p-8 bg-white/5 border border-white/10 rounded-2xl md:rounded-[2.5rem] hover:bg-white/10 transition-colors group cursor-pointer active:bg-white/10">
-                  <div className="w-10 md:w-12 h-10 md:h-12 blue-gradient rounded-xl md:rounded-2xl flex items-center justify-center text-white mb-4 md:mb-6 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
-                    <Layers className="w-5 md:w-6 h-5 md:h-6" />
-                  </div>
-                  <h4 className="text-lg md:text-xl font-bold text-white mb-2 md:mb-3">In Sắc Nét 3 Lớp</h4>
-                  <p className="text-xs md:text-sm text-slate-400 font-light">Độ phân giải cao, mực in chuyên dụng không bong tróc.</p>
-                </div>
-                
-                <div className="p-6 md:p-8 bg-white/5 border border-white/10 rounded-2xl md:rounded-[2.5rem] hover:bg-white/10 transition-colors group cursor-pointer active:bg-white/10">
-                  <div className="w-10 md:w-12 h-10 md:h-12 blue-gradient rounded-xl md:rounded-2xl flex items-center justify-center text-white mb-4 md:mb-6 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
-                    <Target className="w-5 md:w-6 h-5 md:h-6" />
-                  </div>
-                  <h4 className="text-lg md:text-xl font-bold text-white mb-2 md:mb-3">Khai Trương & Sự Kiện</h4>
-                  <p className="text-xs md:text-sm text-slate-400 font-light">Tạo hiệu ứng thu hút mạnh mẽ, là món quà tặng thương hiệu.</p>
-                </div>
-              </div>
-              
-              <div className="pt-4 text-center lg:text-left">
-                <a href="#lien-he" className="inline-flex items-center gap-4 bg-white text-slate-900 px-8 md:px-12 py-4 md:py-5 rounded-full font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] hover:bg-[#33C1E3] hover:text-white transition-all btn-luxury shadow-2xl w-full sm:w-auto justify-center active:scale-95">
-                   Nhận báo giá in Logo Sỉ <ArrowRight className="w-5 h-5" />
-                </a>
-              </div>
-            </div>
-            
-            <div className="relative reveal reveal-delay-200">
-              <div className="absolute -inset-10 bg-[#33C1E3]/20 rounded-full blur-[100px] animate-pulse hidden md:block"></div>
-              <div className="relative rounded-3xl md:rounded-[4rem] overflow-hidden border-2 border-white/10 shadow-2xl luxury-shadow group">
-                <img 
-                  src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=1200" 
-                  alt="Corporate Balloon Branding" 
-                  className="w-full h-[300px] md:h-[700px] object-cover opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-[2000ms]"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
-                
-                {/* Floating Tags */}
-                <div className="absolute bottom-4 left-4 right-4 md:bottom-12 md:left-12 md:right-12 bg-white/10 backdrop-blur-xl p-4 md:p-8 rounded-xl md:rounded-[2rem] border border-white/10 hover:bg-white/20 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-[#33C1E3] mb-1">Dự án quy mô lớn</p>
-                      <p className="text-white font-serif text-base md:text-2xl font-bold">In Logo Doanh Nghiệp</p>
+              <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
+                <form onSubmit={handleGetAiAdvice} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-slate-500 font-bold ml-1">Loại Hình Tiệc</label>
+                      <select 
+                        value={partyType}
+                        onChange={(e) => setPartyType(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-[#33C1E3] transition-colors appearance-none"
+                      >
+                        <option value="Thôi nôi">Thôi nôi / Sinh nhật bé</option>
+                        <option value="Đám cưới">Đám cưới / Kỷ niệm</option>
+                        <option value="Khai trương">Khai trương / Sự kiện</option>
+                        <option value="Tiệc tùng">Tiệc ngoài trời / Pool Party</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-slate-500 font-bold ml-1">Ngân Sách Dự Kiến</label>
+                      <select 
+                        value={budget}
+                        onChange={(e) => setBudget(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-[#33C1E3] transition-colors appearance-none"
+                      >
+                        <option value="Dưới 5 triệu">Dưới 5.000.000đ</option>
+                        <option value="5-15 triệu">5.000.000đ - 15.000.000đ</option>
+                        <option value="Trên 20 triệu">Trên 20.000.000đ</option>
+                        <option value="Tầm trung">Tầm trung (Liên hệ tư vấn)</option>
+                      </select>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Us Section */}
-      <section id="vi-sao-chon" className="py-10 md:py-32 bg-slate-900 relative overflow-hidden border-t border-white/5">
-        
-        <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
-          <SectionHeading 
-            badge="Our Quality"
-            title="Đẳng Cấp Khác Biệt"
-            subtitle="Từ chất liệu đến quy trình thi công, Bong Bóng Xinh luôn đặt tiêu chuẩn cao nhất."
-            light
-          />
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12">
-            {features.map((feature, idx) => (
-              <div key={idx} className={`reveal reveal-delay-${(idx % 4) * 100} group text-center`}>
-                <div className="w-16 h-16 md:w-24 md:h-24 bg-white/5 border border-white/10 rounded-[1.5rem] md:rounded-[2.5rem] flex items-center justify-center mx-auto mb-4 md:mb-8 transition-all duration-700 group-hover:bg-[#33C1E3] group-hover:scale-110 group-hover:rotate-6">
-                  <div className="text-2xl md:text-4xl transition-colors group-hover:text-white">
-                    {feature.icon}
+                  
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-slate-500 font-bold ml-1">Số Lượng Khách</label>
+                    <select 
+                      value={guestCount}
+                      onChange={(e) => setGuestCount(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-[#33C1E3] transition-colors appearance-none"
+                    >
+                      <option value="Dưới 30 khách">Dưới 30 khách</option>
+                      <option value="30-50 khách">30 - 50 khách</option>
+                      <option value="50-100 khách">50 - 100 khách</option>
+                      <option value="Trên 100 khách">Trên 100 khách</option>
+                    </select>
                   </div>
-                </div>
-                <h4 className="text-lg md:text-2xl font-serif font-bold text-white mb-2 md:mb-4">{feature.title}</h4>
-                <p className="text-slate-400 text-xs md:text-sm font-light leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-          
-          <div className="mt-12 md:mt-32 rounded-2xl md:rounded-[4rem] overflow-hidden relative group h-[250px] md:h-[500px] shadow-2xl reveal">
-            <img 
-              src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=1600" 
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[3000ms]" 
-              alt="Gallery" 
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent flex flex-col md:flex-row items-center md:items-end justify-between p-6 md:p-16 text-center md:text-left">
-              <div className="text-white max-w-lg mb-6 md:mb-0">
-                <h3 className="text-2xl md:text-4xl font-serif font-bold mb-2 md:mb-4">Dấu Ấn Kỉ Niệm</h3>
-                <p className="text-slate-200 font-light text-xs md:text-base hidden md:block">Mỗi dự án là một kiệt tác tâm huyết từ đội ngũ nghệ nhân lành nghề.</p>
-              </div>
-              <button className="bg-white text-slate-900 px-8 md:px-12 py-3 md:py-5 rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-[0.3em] shadow-2xl hover:bg-[#33C1E3] hover:text-white transition-all btn-luxury active:scale-95">
-                Xem Thư Viện
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Testimonials Section */}
-      <section className="py-10 md:py-32 bg-white relative">
-        <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <SectionHeading 
-            badge="Testimonials"
-            title="Khách Hàng Nói Gì"
-            subtitle="Sự hài lòng của khách hàng là minh chứng rõ nét nhất."
-          />
-
-          <div className="relative reveal">
-            <div className="absolute top-0 left-0 text-[#33C1E3]/10 transform -translate-x-1/4 -translate-y-1/4 hidden md:block">
-              <Quote size={120} fill="currentColor" stroke="none" />
-            </div>
-
-            <div className="bg-[#F8FAFC] rounded-2xl md:rounded-[3rem] p-6 md:p-16 relative border border-slate-100 luxury-shadow">
-               <div className="flex flex-col md:flex-row gap-6 md:gap-16 items-center">
-                 <div className="shrink-0 relative">
-                   <div className="w-20 h-20 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                     <img 
-                      src={testimonials[currentTestimonial].avatar} 
-                      alt={testimonials[currentTestimonial].name}
-                      className="w-full h-full object-cover"
-                     />
-                   </div>
-                   <div className="absolute -bottom-2 -right-2 bg-[#33C1E3] text-white p-1.5 md:p-2 rounded-full shadow-lg">
-                      <Star size={14} fill="currentColor" />
-                   </div>
-                 </div>
-                 
-                 <div className="flex-grow text-center md:text-left">
-                    <p className="text-base md:text-2xl font-serif leading-relaxed italic text-slate-700 mb-4 md:mb-6">
-                      "{testimonials[currentTestimonial].text}"
-                    </p>
-                    <div>
-                      <h4 className="text-base md:text-lg font-bold text-slate-900">{testimonials[currentTestimonial].name}</h4>
-                      <p className="text-xs md:text-sm text-[#33C1E3] font-bold uppercase tracking-wider">{testimonials[currentTestimonial].role}</p>
-                    </div>
-                 </div>
-               </div>
-
-               <div className="flex justify-center md:justify-end gap-4 mt-8 md:mt-0 md:absolute md:bottom-12 md:right-12">
-                 <button onClick={prevTestimonial} className="w-12 h-12 md:w-12 md:h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#33C1E3] hover:border-[#33C1E3] transition-all hover:-translate-y-1 shadow-md active:scale-95 active:bg-slate-50">
-                   <ChevronLeft size={20} />
-                 </button>
-                 <button onClick={nextTestimonial} className="w-12 h-12 md:w-12 md:h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#33C1E3] hover:border-[#33C1E3] transition-all hover:-translate-y-1 shadow-md active:scale-95 active:bg-slate-50">
-                   <ChevronRight size={20} />
-                 </button>
-               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AI Consulting Concierge */}
-      <section id="tu-van-ai" className="py-10 md:py-32 bg-[#F8FAFC]">
-        <div className="max-w-4xl mx-auto px-4 md:px-6">
-          <div className="bg-white rounded-3xl md:rounded-[4rem] p-6 md:p-24 shadow-2xl border border-slate-100 relative overflow-hidden luxury-shadow reveal">
-            <div className="absolute top-0 right-0 w-40 md:w-80 h-40 md:h-80 blue-gradient opacity-10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[60px] md:blur-[100px]"></div>
-            
-            <div className="relative z-10">
-              <div className="text-center mb-8 md:mb-20">
-                <div className="inline-flex items-center gap-3 bg-[#33C1E3]/10 px-4 py-2 md:px-6 md:py-2.5 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-[#33C1E3] mb-4 md:mb-8">
-                  <Sparkles className="w-3 h-3 md:w-4 md:h-4" /> AI Designer
-                </div>
-                <h2 className="text-3xl md:text-6xl font-serif font-bold text-slate-900 mb-4 md:mb-8 leading-tight">Ý Tưởng Thông Minh</h2>
-                <p className="text-slate-500 font-light text-sm md:text-xl leading-relaxed">
-                  Trí tuệ nhân tạo sẽ giúp bạn phác thảo concept trang trí dựa trên loại tiệc và ngân sách đầu tư.
-                </p>
-              </div>
-
-              <form onSubmit={handleGetAdvice} className="grid md:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-16">
-                <div className="space-y-2 md:space-y-4 input-underline group">
-                  <label className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2">Chủ đề tiệc</label>
-                  <select 
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 text-slate-700 focus:outline-none focus:bg-white transition-all font-medium text-base cursor-pointer hover:bg-white appearance-none"
-                    onChange={(e) => setFormData({...formData, partyType: e.target.value})}
-                    value={formData.partyType}
-                    required
-                  >
-                    <option value="">Chọn loại tiệc...</option>
-                    <option value="Sinh nhật bé trai/bé gái">Sinh nhật cho bé</option>
-                    <option value="Tiệc cưới sang trọng">Tiệc cưới (Wedding)</option>
-                    <option value="Khai trương & Sự kiện">Khai trương/Sự kiện</option>
-                    <option value="Tiệc sinh nhật người lớn">Sinh nhật người lớn</option>
-                    <option value="In logo bong bóng quảng bá doanh nghiệp">In logo thương hiệu</option>
-                  </select>
-                </div>
-                <div className="space-y-2 md:space-y-4 input-underline group">
-                  <label className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-2">Ngân sách dự kiến</label>
-                  <input 
-                    type="text" 
-                    placeholder="VD: 5 - 15 triệu"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:bg-white transition-all font-medium text-base"
-                    onChange={(e) => setFormData({...formData, budget: e.target.value})}
-                    value={formData.budget}
-                    required
-                  />
-                </div>
-                <div className="space-y-3 md:space-y-4 flex flex-col justify-end">
                   <button 
-                    type="submit"
-                    disabled={loadingAdvice}
-                    className="w-full blue-gradient text-white py-4 md:py-5 rounded-xl md:rounded-2xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] hover:shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 btn-luxury shadow-lg shadow-blue-500/30 active:scale-95"
+                    disabled={isAiLoading}
+                    className="w-full bg-[#33C1E3] text-slate-900 font-bold py-4 rounded-xl hover:bg-white transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                   >
-                    {loadingAdvice ? <Loader2 className="animate-spin w-5 h-5" /> : <>Bắt đầu tư vấn <ArrowRight className="w-4 h-4" /></>}
+                    {isAiLoading ? <Loader2 className="animate-spin" /> : <Send size={18} />}
+                    {isAiLoading ? 'Đang Phân Tích...' : 'Nhận Tư Vấn Ngay'}
                   </button>
-                </div>
-              </form>
-
-              {adviceResult && (
-                <div className="bg-[#33C1E3]/5 rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 border border-[#33C1E3]/10 animate-in fade-in slide-in-from-bottom-12 duration-700">
-                  <div className="flex items-center gap-4 mb-6 md:mb-10">
-                    <div className="w-8 h-8 md:w-12 md:h-12 blue-gradient rounded-full flex items-center justify-center text-white shadow-lg animate-bounce">
-                      <Star className="w-4 h-4 md:w-6 md:h-6" />
+                </form>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <div id="ai-result" className={`transition-all duration-700 ${aiAdvice ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none absolute'}`}>
+                <div className="bg-white rounded-[2rem] p-10 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-6">
+                    <MessageSquare className="text-slate-100 w-24 h-24" />
+                  </div>
+                  <div className="relative z-10">
+                    <h4 className="text-2xl font-serif font-bold text-slate-900 mb-6">Gợi Ý Từ Bong Bóng Xinh</h4>
+                    <div className="prose prose-slate prose-sm max-w-none text-slate-600 leading-relaxed whitespace-pre-line">
+                      {aiAdvice}
                     </div>
-                    <h4 className="text-lg md:text-2xl font-serif font-bold text-slate-900">Concept Đề Xuất</h4>
+                    <div className="mt-10 pt-8 border-t border-slate-100 flex items-center justify-between">
+                      <p className="text-xs text-slate-400">Tư vấn hoàn thành bởi BongBongXinh AI</p>
+                      <a href="tel:0909084174" className="text-[#33C1E3] font-bold text-sm flex items-center gap-2">
+                        Gọi Chốt Ngay <ArrowRight size={14} />
+                      </a>
+                    </div>
                   </div>
-                  <div className="text-slate-600 leading-[1.6] md:leading-[1.8] whitespace-pre-line text-sm md:text-lg font-light">
-                    {adviceResult}
+                </div>
+              </div>
+
+              {!aiAdvice && !isAiLoading && (
+                <div className="reveal reveal-delay-300">
+                  <img src={NEW_CONSULT_IMG} alt="Tư vấn miễn phí" className="w-full max-w-md mx-auto rounded-3xl animate-float" />
+                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-white px-8 py-6 rounded-2xl shadow-xl border border-slate-100 w-max">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                        <Phone size={24} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Hotline 24/7</p>
+                        <p className="text-xl font-bold text-slate-900">0909.084.174</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-8 md:mt-12 pt-8 md:pt-12 border-t border-[#33C1E3]/10 flex flex-col sm:flex-row justify-between items-center gap-6 md:gap-8 text-center md:text-left">
-                    <p className="text-xs italic text-slate-400">Concept này được tạo riêng cho yêu cầu của bạn.</p>
-                    <a href="#lien-he" className="blue-gradient text-white px-8 md:px-10 py-3.5 md:py-4 rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all btn-luxury w-full sm:w-auto text-center active:scale-95">Chat Cùng Nghệ Nhân</a>
-                  </div>
+                </div>
+              )}
+              
+              {isAiLoading && (
+                <div className="flex flex-col items-center justify-center py-20 text-white">
+                  <Loader2 className="w-16 h-16 animate-spin text-[#33C1E3] mb-6" />
+                  <p className="text-xl font-serif">Đang phân tích dữ liệu...</p>
+                  <p className="text-slate-400 text-sm mt-2">Chờ xíu nhé, chúng mình đang tìm phong cách phù hợp nhất!</p>
                 </div>
               )}
             </div>
@@ -623,128 +442,153 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="lien-he" className="py-10 md:py-32 bg-white relative">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-12 md:gap-32 items-start">
-          <div className="lg:sticky lg:top-32 text-center lg:text-left order-2 lg:order-1">
-            <SectionHeading 
-              badge="Get In Touch"
-              title="Khởi Đầu Của Một Bữa Tiệc Đẹp"
-              subtitle="Hãy để chuyên gia của chúng tôi hiện thực hóa ý tưởng của bạn ngay hôm nay."
-            />
-            
-            <div className="grid sm:grid-cols-2 gap-8 md:gap-16">
-              <div className="space-y-2 reveal reveal-delay-100">
-                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-[#33C1E3]">Hotline / Zalo</p>
-                <p className="text-2xl md:text-3xl font-serif font-bold text-slate-900 hover:text-[#33C1E3] transition-colors cursor-pointer">0909084174</p>
-                <p className="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-widest">Ms. Quỳnh Giang</p>
-              </div>
-              <div className="space-y-2 reveal reveal-delay-200">
-                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-[#33C1E3]">Email Contact</p>
-                <p className="text-lg md:text-2xl font-serif font-bold text-slate-900 break-words hover:text-[#33C1E3] transition-colors cursor-pointer">admin@bongbongxinh.com</p>
-              </div>
-              <div className="space-y-4 col-span-full reveal reveal-delay-300">
-                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-[#33C1E3]">Social Media</p>
-                <div className="flex gap-6 pt-2 justify-center lg:justify-start">
-                  <a href="https://www.facebook.com/Bongbongxinhcom" target="_blank" className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-600 hover:text-white hover:bg-[#1877F2] hover:shadow-xl hover:-translate-y-2 transition-all border border-slate-100"><Facebook /></a>
-                  <a href="https://www.instagram.com/bongbongxinh_official" target="_blank" className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-600 hover:text-white hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:shadow-xl hover:-translate-y-2 transition-all border border-slate-100"><Instagram /></a>
+      {/* Corporate In-Logo Section */}
+      <section id="in-logo" className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+             <div className="order-2 lg:order-1 reveal">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <div className="h-64 bg-slate-100 rounded-3xl p-8 flex flex-col justify-end">
+                      <Layers className="text-[#33C1E3] mb-4" size={32} />
+                      <h4 className="text-xl font-bold text-slate-900">Bền Màu</h4>
+                      <p className="text-slate-500 text-sm">Công nghệ in lụa 3 lớp.</p>
+                    </div>
+                    <img src="https://trangtrisinhnhat.com/wp-content/uploads/2021/12/Bong-bong-sinh-nhat-phi-hanh-gia.jpg" className="h-48 w-full object-cover rounded-3xl" alt="Balloon printing" />
+                  </div>
+                  <div className="space-y-4 pt-8">
+                    <img src={NEW_CONSULT_IMG} className="h-48 w-full object-cover rounded-3xl" alt="Consultation banner" />
+                    <div className="h-64 bg-slate-900 rounded-3xl p-8 flex flex-col justify-end text-white">
+                      <Clock className="text-[#33C1E3] mb-4" size={32} />
+                      <h4 className="text-xl font-bold">24H</h4>
+                      <p className="text-slate-400 text-sm">Giao hàng cực nhanh.</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+             </div>
+             <div className="order-1 lg:order-2 reveal">
+                <span className="text-[#33C1E3] font-bold tracking-widest uppercase text-xs mb-4 block">Bong Bóng In Logo</span>
+                <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 mb-8 leading-tight">Nâng Tầm Nhận Diện <br/> Thương Hiệu Doanh Nghiệp</h2>
+                <p className="text-slate-600 text-lg font-light mb-8 leading-relaxed">
+                  Giải pháp quảng bá thông minh, chi phí thấp nhưng mang lại hiệu ứng thị giác cực kỳ ấn tượng tại các sự kiện khai trương, lễ hội, workshop.
+                </p>
+                <div className="space-y-4 mb-10">
+                  {['Mực in nhập khẩu, không bong tróc.', 'Đáp ứng số lượng lớn (10k+ bóng/ngày).', 'Hỗ trợ thiết kế file in miễn phí.'].map((text, i) => (
+                    <div key={i} className="flex items-center gap-3 text-slate-700">
+                      <CheckCircle2 className="text-[#33C1E3] w-5 h-5 flex-shrink-0" />
+                      <span className="font-medium">{text}</span>
+                    </div>
+                  ))}
+                </div>
+                <a href={IN_LOGO_LINK} target="_blank" rel="noopener noreferrer" className="bg-slate-900 text-white px-10 py-4 rounded-xl font-bold hover:bg-[#33C1E3] transition-all inline-block shadow-lg">
+                  Nhận Báo Giá In Logo
+                </a>
+             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="bg-[#F8FAFC] p-6 sm:p-12 md:p-20 rounded-[2.5rem] md:rounded-[4rem] border border-slate-100 luxury-shadow relative reveal order-1 lg:order-2">
-            <h3 className="text-2xl md:text-3xl font-serif font-bold mb-8 md:mb-12 text-slate-900 text-center lg:text-left">Gửi Yêu Cầu Tư Vấn</h3>
-            <form className="space-y-6 md:space-y-8">
-              <div className="grid sm:grid-cols-2 gap-6 md:gap-10">
-                <div className="space-y-2 group input-underline">
-                  <label className="block text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Tên của bạn</label>
-                  <input 
-                    type="text" 
-                    className="w-full bg-transparent border-b-2 border-slate-200 py-3 focus:outline-none focus:border-transparent transition-all font-light text-base md:text-lg placeholder:text-slate-300" 
-                    placeholder="Nhập tên..." 
-                  />
+      {/* Testimonials */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
+          <SectionHeading 
+            title="Khách Hàng Chia Sẻ"
+            subtitle="Hạnh phúc của chúng tôi là được góp phần tạo nên những kỷ niệm đẹp của bạn."
+          />
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((t, idx) => (
+              <div key={t.id} className="bg-white p-10 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-500 reveal">
+                <div className="flex gap-1 mb-6">
+                  {[1,2,3,4,5].map(s => <Star key={s} size={14} className="fill-yellow-400 text-yellow-400" />)}
                 </div>
-                <div className="space-y-2 group input-underline">
-                  <label className="block text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Điện thoại</label>
-                  <input 
-                    type="tel" 
-                    className="w-full bg-transparent border-b-2 border-slate-200 py-3 focus:outline-none focus:border-transparent transition-all font-light text-base md:text-lg placeholder:text-slate-300" 
-                    placeholder="Nhập số..." 
-                  />
+                <p className="text-slate-600 italic mb-8 leading-relaxed font-light">"{t.text}"</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm">
+                    <img src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900">{t.name}</h4>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">{t.role}</p>
+                  </div>
                 </div>
               </div>
-              <div className="space-y-2 group input-underline">
-                <label className="block text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Ngân sách dự kiến</label>
-                <input 
-                  type="text" 
-                  className="w-full bg-transparent border-b-2 border-slate-200 py-3 focus:outline-none focus:border-transparent transition-all font-light text-base md:text-lg placeholder:text-slate-300" 
-                  placeholder="VD: 5.000.000đ" 
-                />
-              </div>
-              <div className="space-y-2 group input-underline">
-                <label className="block text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Lời nhắn</label>
-                <textarea 
-                  rows={3} 
-                  className="w-full bg-transparent border-b-2 border-slate-200 py-3 focus:outline-none focus:border-transparent transition-all font-light text-base md:text-lg resize-none placeholder:text-slate-300" 
-                  placeholder="Mô tả sự kiện..."
-                ></textarea>
-              </div>
-              <button className="w-full py-4 md:py-6 blue-gradient text-white rounded-2xl md:rounded-3xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] hover:shadow-2xl transition-all duration-500 shadow-xl group btn-luxury mt-4 active:scale-95">
-                <span className="flex items-center justify-center gap-4">Gửi Thông Tin <ArrowRight className="w-5 h-5 group-hover:translate-x-3 transition-transform" /></span>
-              </button>
-            </form>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-10 md:py-32 pb-32 md:pb-32">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-10 md:gap-20 mb-12 md:mb-24">
-            <div className="sm:col-span-2 space-y-8 md:space-y-12 reveal">
-              <div className="bg-white p-2.5 md:p-3 rounded-2xl w-fit shadow-2xl">
-                <img src={LOGO_URL} alt="Bong Bóng Xinh" className="h-10 md:h-16" loading="lazy" decoding="async" />
+      <footer id="lien-he" className="bg-slate-900 text-slate-400 pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid md:grid-cols-4 gap-12 mb-20 border-b border-white/5 pb-20">
+            <div className="col-span-1 md:col-span-1">
+              <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-8 p-1">
+                <img src={LOGO_URL} alt="Bong Bong Xinh" className="w-full h-full object-contain" />
               </div>
-              <p className="text-lg md:text-2xl font-serif font-light leading-relaxed max-w-md italic text-slate-300">
-                "Kiến tạo những giấc mơ, lưu giữ những khoảnh khắc."
+              <p className="text-sm leading-relaxed mb-8 pr-4">
+                Đơn vị dẫn đầu trong nghệ thuật trang trí bong bóng tại Việt Nam. Chúng tôi mang đến sự sang trọng và khác biệt cho mọi sự kiện.
               </p>
+              <div className="flex gap-4">
+                <a href="#" className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-[#33C1E3] hover:text-white transition-all"><Facebook size={20} /></a>
+                <a href="#" className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-[#33C1E3] hover:text-white transition-all"><Instagram size={20} /></a>
+              </div>
             </div>
             
-            <div className="reveal reveal-delay-100">
-              <h4 className="text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] mb-6 md:mb-12">Sitemap</h4>
-              <ul className="space-y-3 md:space-y-6 text-sm font-light">
-                <li><a href="#dich-vu" className="hover:text-[#33C1E3] transition-colors">Dịch vụ đặc quyền</a></li>
-                <li><a href="#in-logo-spotlight" className="hover:text-[#33C1E3] transition-colors">Dịch vụ in Logo</a></li>
-                <li><a href="#vi-sao-chon" className="hover:text-[#33C1E3] transition-colors">Về chúng tôi</a></li>
-                <li><a href="#tu-van-ai" className="hover:text-[#33C1E3] transition-colors">Tư vấn thông minh</a></li>
+            <div>
+              <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-8">Hạng Mục Trang Trí</h4>
+              <ul className="space-y-4 text-sm font-light">
+                <li><a href="#" className="hover:text-white transition-colors">Trang trí thôi nôi cao cấp</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Cổng chào sự kiện nghệ thuật</a></li>
+                <li><a href={IN_LOGO_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">In logo bong bóng quảng cáo</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Backdrop Check-in chuyên nghiệp</a></li>
               </ul>
             </div>
 
-            <div className="reveal reveal-delay-200">
-              <h4 className="text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] mb-6 md:mb-12">Liên Hệ</h4>
-              <ul className="space-y-3 md:space-y-6 text-sm font-light">
-                <li className="flex items-center gap-3"><Phone className="w-4 h-4 text-[#33C1E3]" /> 0909084174</li>
-                <li className="flex items-center gap-3 break-all"><Mail className="w-4 h-4 text-[#33C1E3] shrink-0" /> admin@bongbongxinh.com</li>
-                <li className="text-[#33C1E3] font-bold">Hỗ trợ 24/7</li>
+            <div>
+              <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-8">Về Chúng Tôi</h4>
+              <ul className="space-y-4 text-sm font-light">
+                <li><a href="#" className="hover:text-white transition-colors">Dự án đã thực hiện</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Chính sách thi công</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Báo giá tổng hợp</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Tuyển dụng</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-8">Kết Nối Với Chúng Tôi</h4>
+              <ul className="space-y-5 text-sm font-light">
+                <li className="flex items-center gap-4"><Phone size={18} className="text-[#33C1E3]" /> 0909.084.174</li>
+                <li className="flex items-center gap-4"><Mail size={18} className="text-[#33C1E3]" /> admin@bongbongxinh.com</li>
+                <li className="flex items-start gap-4"><Target size={18} className="text-[#33C1E3] mt-1" /> 17/14 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM</li>
               </ul>
             </div>
           </div>
           
-          <div className="pt-8 md:pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-center md:text-left">
-            <p className="text-slate-500">© 2024 Bong Bóng Xinh.</p>
-            <p>Designed by <span className="text-[#33C1E3]">52Growth.com</span></p>
+          <div className="flex flex-col md:flex-row justify-between items-center text-[10px] text-slate-500 uppercase tracking-widest font-bold">
+            <p>© 2024 Bong Bóng Xinh. Tất cả quyền được bảo lưu.</p>
+            <p className="mt-4 md:mt-0">Thiết kế bởi 52Growth.</p>
           </div>
         </div>
       </footer>
-
-      {/* Persistent Sticky Contact - Mobile Optimized with Safe Area */}
-      <div className="fixed bottom-safe right-4 md:right-12 z-50 flex flex-col gap-3 md:gap-6 pointer-events-none pb-2 md:pb-0">
-        <a href="https://zalo.me/0909084174" target="_blank" className="pointer-events-auto w-12 h-12 md:w-16 md:h-16 bg-[#33C1E3] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform luxury-shadow group active:scale-95">
-          <span className="font-black text-[8px] md:text-[10px] tracking-widest">ZALO</span>
+      
+      {/* Sticky Support */}
+      <div className="fixed bottom-safe right-4 md:right-8 z-40 flex flex-col gap-4">
+        <a 
+          href="https://zalo.me/0909084174" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="bg-[#0068FF] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform group"
+        >
+          <span className="font-bold text-[10px]">ZALO</span>
+          <div className="absolute right-full mr-4 bg-white text-slate-900 px-4 py-2 rounded-lg text-xs font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Chat Zalo Ngay</div>
         </a>
-        <a href="tel:0909084174" className="pointer-events-auto w-12 h-12 md:w-16 md:h-16 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform animate-float shadow-cyan-500/20 active:scale-95">
-          <Phone className="w-5 h-5 md:w-7 md:h-7" />
+        <a 
+          href="tel:0909084174" 
+          className="bg-[#33C1E3] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform animate-bounce relative group"
+        >
+          <Phone size={24} />
+          <div className="absolute right-full mr-4 bg-[#33C1E3] text-white px-4 py-2 rounded-lg text-xs font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Gọi Hotline</div>
         </a>
       </div>
     </div>
